@@ -1,0 +1,41 @@
+{
+  "counter": 14,
+  "students": {
+    "STU0011": {
+      "id": "STU0011",
+      "name": "Saif ",
+      "email": "saifmodan000@gmail.com",
+      "phone": "+91 98247-85082",
+      "dob": "2006-08-14",
+      "photo_path": "C:\\Users\\Sahil\\OneDrive\\Desktop\\face_recognition\\backend\\reference_photos\\STU0011.jpg",
+      "photo_url": "/reference_photos/STU0011.jpg"
+    },
+    "STU0012": {
+      "id": "STU0012",
+      "name": "marsh",
+      "email": "marsh@gmail.com",
+      "phone": "+911234567890",
+      "dob": "2006-08-12",
+      "photo_path": "C:\\Users\\Sahil\\OneDrive\\Desktop\\face_recognition\\backend\\reference_photos\\STU0012.jpg",
+      "photo_url": "/reference_photos/STU0012.jpg"
+    },
+    "STU0013": {
+      "id": "STU0013",
+      "name": "jon",
+      "email": "jon@gmail.com",
+      "phone": "+911234567098",
+      "dob": "2006-08-11",
+      "photo_path": "C:\\Users\\Sahil\\OneDrive\\Desktop\\face_recognition\\backend\\reference_photos\\STU0013.jpg",
+      "photo_url": "/reference_photos/STU0013.jpg"
+    },
+    "STU0014": {
+      "id": "STU0014",
+      "name": "amber",
+      "email": "amber@gmail.com",
+      "phone": "+912314576890",
+      "dob": "2005-08-12",
+      "photo_path": "C:\\Users\\Sahil\\OneDrive\\Desktop\\face_recognition\\backend\\reference_photos\\STU0014.jpg",
+      "photo_url": "/reference_photos/STU0014.jpg"
+    }
+  }
+}

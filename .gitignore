@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Reference photos (exclude from git, keep folder)
+backend/reference_photos/*.jpg
+backend/reference_photos/*.jpeg
+backend/reference_photos/*.png
+
+# Node
+frontend/node_modules/
+frontend/build/
+frontend/.env.local
+
+# Misc
+.DS_Store
+*.log
+.env
