@@ -15,6 +15,7 @@ build/
 backend/reference_photos/*.jpg
 backend/reference_photos/*.jpeg
 backend/reference_photos/*.png
+backend/students.db
 
 # Node
 frontend/node_modules/

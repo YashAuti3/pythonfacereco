@@ -1,15 +1,6 @@
 {
-  "counter": 14,
+  "counter": 16,
   "students": {
-    "STU0011": {
-      "id": "STU0011",
-      "name": "Saif ",
-      "email": "saifmodan000@gmail.com",
-      "phone": "+91 98247-85082",
-      "dob": "2006-08-14",
-      "photo_path": "C:\\Users\\Sahil\\OneDrive\\Desktop\\face_recognition\\backend\\reference_photos\\STU0011.jpg",
-      "photo_url": "/reference_photos/STU0011.jpg"
-    },
     "STU0012": {
       "id": "STU0012",
       "name": "marsh",
@@ -36,6 +27,15 @@
       "dob": "2005-08-12",
       "photo_path": "C:\\Users\\Sahil\\OneDrive\\Desktop\\face_recognition\\backend\\reference_photos\\STU0014.jpg",
       "photo_url": "/reference_photos/STU0014.jpg"
+    },
+    "STU0016": {
+      "id": "STU0016",
+      "name": "Saif ",
+      "email": "saifmodan000@gmail.com",
+      "phone": "+91 98247-85082",
+      "dob": "2006-08-14",
+      "photo_path": "C:\\Users\\Sahil\\OneDrive\\Desktop\\face_recognition\\backend\\reference_photos\\STU0016.jpg",
+      "photo_url": "/reference_photos/STU0016.jpg"
     }
   }
 }

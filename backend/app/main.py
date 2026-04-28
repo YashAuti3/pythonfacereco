@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import tempfile
@@ -16,9 +15,11 @@ logger = logging.getLogger(__name__)
 try:
     from .models import RecognitionResult, Student
     from .services.face_service import FaceRecognitionService
+    from .student_store import StudentStore
 except ImportError:
     from models import RecognitionResult, Student
     from services.face_service import FaceRecognitionService
+    from student_store import StudentStore
 
 app = FastAPI(title="Face Recognition API", version="4.0.0")
 
@@ -32,32 +33,19 @@ app.add_middleware(
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 PHOTOS_DIR = BASE_DIR / "reference_photos"
-DB_FILE = BASE_DIR / "students_db.json"
+DB_FILE = BASE_DIR / "students.db"
+LEGACY_JSON_FILE = BASE_DIR / "students_db.json"
 PHOTOS_DIR.mkdir(exist_ok=True)
 
 
-def load_db() -> dict:
-    if DB_FILE.exists():
-        try:
-            return json.loads(DB_FILE.read_text(encoding="utf-8"))
-        except Exception as exc:
-            logger.warning("Could not read student database: %s", exc)
-    return {"counter": 0, "students": {}}
-
-
-def save_db(db: dict) -> None:
-    DB_FILE.write_text(json.dumps(db, indent=2), encoding="utf-8")
-
-
-db = load_db()
+student_store = StudentStore(DB_FILE, LEGACY_JSON_FILE)
 
 app.mount("/reference_photos", StaticFiles(directory=str(PHOTOS_DIR)), name="photos")
 face_svc = FaceRecognitionService(str(PHOTOS_DIR))
 
 
 def next_id() -> str:
-    db["counter"] = db.get("counter", 0) + 1
-    return f"STU{db['counter']:04d}"
+    return student_store.next_id()
 
 
 @app.get("/")
@@ -84,7 +72,6 @@ async def add_student(
 
         registration = face_svc.register(student_id, str(photo_path))
         if not registration.get("registered"):
-            db["counter"] -= 1
             photo_path.unlink(missing_ok=True)
             raise HTTPException(
                 status_code=422,
@@ -103,14 +90,12 @@ async def add_student(
             "photo_path": str(photo_path),
             "photo_url": f"/reference_photos/{student_id}.jpg",
         }
-        db["students"][student_id] = record
-        save_db(db)
+        student_store.add_student(record)
         return Student(**record)
 
     except HTTPException:
         raise
     except Exception as exc:
-        db["counter"] -= 1
         photo_path.unlink(missing_ok=True)
         logger.exception("Failed to add student")
         raise HTTPException(500, str(exc)) from exc
@@ -118,20 +103,19 @@ async def add_student(
 
 @app.get("/api/students/", response_model=List[Student])
 async def get_students():
-    return [Student(**student) for student in db["students"].values()]
+    return [Student(**student) for student in student_store.list_students()]
 
 
 @app.delete("/api/students/{student_id}")
 async def delete_student(student_id: str):
-    if student_id not in db["students"]:
+    record = student_store.get_student(student_id)
+    if not record:
         raise HTTPException(404, "Student not found")
 
-    record = db["students"][student_id]
     try:
         Path(record["photo_path"]).unlink(missing_ok=True)
         face_svc.remove(student_id)
-        del db["students"][student_id]
-        save_db(db)
+        student_store.delete_student(student_id)
         return {"message": "Deleted"}
     except Exception as exc:
         logger.exception("Failed to delete student %s", student_id)
@@ -150,7 +134,7 @@ async def recognize_face(photo: UploadFile = File(...)):
 
         if result["match_found"]:
             student_id = result["student_id"]
-            student = db["students"].get(student_id, {})
+            student = student_store.get_student(student_id) or {}
             return RecognitionResult(
                 match_found=True,
                 student_id=student_id,
@@ -199,7 +183,7 @@ async def debug():
     ]
     return {
         "photos_on_disk": photos,
-        "students_in_db": list(db["students"].keys()),
+        "students_in_db": student_store.list_student_ids(),
         "embeddings_cached": list(face_svc._store.keys()),
         "model": face_svc.MODEL,
         "threshold": face_svc.DISTANCE_THRESHOLD,
